@@ -1,6 +1,8 @@
+import tkinter
 from typing import List
 from typing import Any
 import math
+from tkinter import *
 
 # import curses
 # stdscr = curses.initscr()
@@ -601,7 +603,7 @@ def rotulo_price(rtype: str, pie_cuadrado: float, rcolumn: int) -> None:
             return total(rprice)
 
 def rotulo_type_selection() -> None:
-    rotulo: str = input(f"What type of sign?: ")
+    update_top= input(f"What type of sign?: ")
     rotulo_low: str = rotulo.lower()
 
     if rotulo_low == "b" or rotulo_low == "banner" or rotulo_low == "bnr":
@@ -697,37 +699,96 @@ def rotulo_size_selection(rtype: str) -> None:
 
 # ------------------------------------------|
 # Start of Everything
-def menu() -> None:
-    selected: str = input("|-----------------------------------------|\n"
-                          "    EZIMPRESS AUTOMATIC ESTIMATION 5000\n"
-                          "|-----------------------------------------|\n"
-                          "Select your quick estimation type: ")
-    if selected == "fy" or selected == "f":
-        return print("You have choosen: Flyers")
+def menu(selected) -> None:
 
-    elif selected == "r" or selected == "rotulo":
-        print("You have choosen: Rotulos ")
-        rotulo_type_selection()
-        return
+    match selected:
+        case "fy"| "f" | "flyers":
+            bottom: str = "You have selected: Flyers"
+            update_bottom(bottom)
+            return
 
-    elif selected == "b" or selected == "bc" or selected == "business cards":
-        return print("You have choosen: Business Cards")
+        case "r" | "rotulo":
+            bottom: str = "You have selected: Rotulos"
+            update_bottom(bottom)
+            return rotulo_type_selection()
 
-    elif selected == "copy" or selected == "c":
-        print("You have choosen: Copies")
-        copy_size_select()
-        return
+        case "b" | "business cards" | "bc":
+            bottom: str = "You have selected: Rotulos"
+            update_bottom(bottom)
 
-    elif selected == "ale" or selected == "Ale" or selected == "Alejandra":
-        print("You're not funny, Ale...\nI'm restarting this shit")
-        return menu()
-    else:
-        print("Error! Restarting...")
-        return menu()
+
+        case "copy" | "c":
+            bottom: str = "You have selected: Copies"
+            update_bottom(bottom)
+
+        case "ale" | "alejandra":
+            bottom: str = "You're not funny, Ale...\nI'm restarting this shit"
+            update_bottom(bottom)
+
+        case _:
+            bottom: str = "Error"
+            update_bottom(bottom)
+
+
+
+
+# --------------------------------------------------------
+#                  APPLICATION MODULES
+# --------------------------------------------------------
+class GUI:
+
+    def __init__(self):
+
+        self.root = Tk()
+        self.root.resizable(False, False)
+
+        self.root.title('Estimation Calculator')
+
+
+        self.main_canvas = tkinter.Canvas(master=self.root, background="snow3", width=400, height=300)
+        self.main_canvas.pack()
+
+        self.logo_image = tkinter.PhotoImage(master=self.main_canvas, file="Logo EZ Impress.png")
+        self.title_label = tkinter.Label(master=self.main_canvas, image=self.logo_image, height=200, width=450, background="snow3")
+        self.title_label.pack()
+
+        self.text_top = tkinter.Label(master=self.main_canvas, background="snow3", text="Select your quick estimation type: ",
+                             font=('Consolas', 15), width=50, height=10, wraplength=400)
+        self.text_top.pack(pady=5)
+
+        self.text_bot = tkinter.Label(master=self.main_canvas, background="snow3", text="I should change...",
+                             font=('Consolas', 15), width=50, height=10, wraplength=400)
+        self.text_bot.pack(pady=5)
+
+        self.entry_line = tkinter.Entry(master=self.main_canvas, background="snow3", width=50)
+        self.entry_line.bind("<Return>", get_input(self))
+        self.entry_line.pack(pady=2)
+
+        self.button_1 = tkinter.Button(master=self.main_canvas, text=" Restart ", font=('Consolas', 15), bg="white", anchor="w",
+                              command=self.root.destroy)
+        self.button_1.pack(padx=20, pady=3)
+
+        self.root.mainloop()
+
+
+def get_input(self) -> None:
+    self.selected: str = self.entry_line.get().lower().strip()
+    self.entry_line.delete(0, tkinter.END)
+    return self.selected
+
+def sequence(selected) -> None:
+    menu(selected)
+
+def update_bottom(self, bottom) -> None:
+    self.text_bot.config(text=f'{bottom}')
+
+def update_top(self, top) -> None:
+    self.text_top.config(text=f'{top}')
+
+
 # ------------------------------------------|
-
 def main() -> None:
-    menu()
+    GUI()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
