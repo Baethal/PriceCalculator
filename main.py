@@ -2,7 +2,6 @@ from typing import List
 from typing import Any
 import math
 
-
 # import curses
 # stdscr = curses.initscr()
 
@@ -563,6 +562,7 @@ pvc18_price: List[float] = [5.75, 5.50, 5.25, 4.75, 4.25, 3.25]
 pvc14_price: List[float] = [7.75, 7.50, 7.00, 6.75, 6.25, 5.00]
 pvc12_price: List[float] = [8.75, 8.50, 8.00, 7.75, 7.25, 6.00]
 poster_price: List[float] = [3.25, 3.10, 3.00, 2.75, 2.55, 2.25]
+vynil_corte_price: float = 0.15
 
 def total(self: float) -> None:
     tax: float = 1.115
@@ -580,11 +580,9 @@ def rotulo_price(rtype: str, pie_cuadrado: float, rcolumn: int) -> None:
         case "d":
             rprice: float = pie_cuadrado * dboard_price[rcolumn]
             return total(rprice)
-
         case "v":
             rprice: float = pie_cuadrado * vynil_price[rcolumn]
             return total(rprice)
-
         case "p18":
             rprice: float = pie_cuadrado * pvc18_price[rcolumn]
             return total(rprice)
@@ -596,6 +594,10 @@ def rotulo_price(rtype: str, pie_cuadrado: float, rcolumn: int) -> None:
             return total(rprice)
         case "p":
             rprice: float = pie_cuadrado * poster_price[rcolumn]
+            return total(rprice)
+        case "vyc":
+            print(f'{pie_cuadrado}')
+            rprice: float = pie_cuadrado * vynil_corte_price
             return total(rprice)
 
 def rotulo_type_selection() -> None:
@@ -623,6 +625,9 @@ def rotulo_type_selection() -> None:
     elif rotulo_low == "p" or rotulo_low == "poster" or rotulo_low == "pos":
         rtype: str = "p"
         return rotulo_size_selection(rtype)
+    elif rotulo_low == "vyc" or rotulo_low == "vynil de corte" or rotulo_low == "vynilcorte":
+        rtype: str = "vyc"
+        return rotulo_size_selection(rtype)
     else:
         print("Error when choosing your desired sign. Restarting Program....")
         return main()
@@ -643,7 +648,12 @@ def rotulo_discount(rtype: str, pie_cuadrado: float) -> float:
         return rotulo_pc(rtype, pie_cuadrado, rdiscount)
 
 def rotulo_pc(rtype: str, pie_cuadrado: float, rdiscount: str, ) -> Any:
-    pie_cuadrado = math.ceil(pie_cuadrado * 4) / 4.0
+
+    if rtype == "vyc":
+        rcolumn = 0
+        return rotulo_price(rtype, pie_cuadrado, rcolumn)
+
+    pie_cuadrado = math.ceil(pie_cuadrado * 10) / 10.0
     if rdiscount == "c":
         rcolumn = -2
         return rotulo_price(rtype, pie_cuadrado, rcolumn)
@@ -676,10 +686,14 @@ def rotulo_size_selection(rtype: str) -> None:
     rsize_1: float = float(input(f"What's the first measurement? "))
     rsize_2: float = float(input(f"What's the second measurement? "))
 
-    rt: float = rsize_1 * rsize_2
-    pie_cuadrado: float = rt / 144
+    if rtype == "vcy":
+        pie_cuadrado: float = rsize_1 * rsize_2
+        return rotulo_discount(rtype, pie_cuadrado)
 
-    return rotulo_discount(rtype, pie_cuadrado)
+    else:
+        rt: float = rsize_1 * rsize_2
+        pie_cuadrado: float = rt / 144
+        return rotulo_discount(rtype, pie_cuadrado)
 
 # ------------------------------------------|
 # Start of Everything
@@ -714,7 +728,6 @@ def menu() -> None:
 
 def main() -> None:
     menu()
-
 
 if __name__ == "__main__":
     main()
