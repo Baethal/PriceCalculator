@@ -699,35 +699,36 @@ def rotulo_size_selection(rtype: str) -> None:
 
 # ------------------------------------------|
 # Start of Everything
-def menu(selected) -> None:
+def menu(selected, gui_instance) -> None:
 
-    match selected:
+    match selected[0]:
         case "fy"| "f" | "flyers":
             bottom: str = "You have selected: Flyers"
-            update_bottom(bottom)
+            gui_instance.update_bottom(bottom)
             return
 
         case "r" | "rotulo":
             bottom: str = "You have selected: Rotulos"
-            update_bottom(bottom)
+            gui_instance.update_bottom(bottom)
             return rotulo_type_selection()
 
         case "b" | "business cards" | "bc":
             bottom: str = "You have selected: Rotulos"
-            update_bottom(bottom)
+            gui_instance.update_bottom(bottom)
 
 
         case "copy" | "c":
             bottom: str = "You have selected: Copies"
-            update_bottom(bottom)
+            gui_instance.update_bottom(bottom)
 
         case "ale" | "alejandra":
             bottom: str = "You're not funny, Ale...\nI'm restarting this shit"
-            update_bottom(bottom)
+            gui_instance.update_bottom(bottom)
 
         case _:
             bottom: str = "Error"
-            update_bottom(bottom)
+            selected.clear()
+            gui_instance.update_bottom(bottom)
 
 
 
@@ -738,7 +739,6 @@ def menu(selected) -> None:
 class GUI:
 
     def __init__(self):
-
         self.root = Tk()
         self.root.resizable(False, False)
 
@@ -754,36 +754,40 @@ class GUI:
 
         self.text_top = tkinter.Label(master=self.main_canvas, background="snow3", text="Select your quick estimation type: ",
                              font=('Consolas', 15), width=50, height=10, wraplength=400)
-        self.text_top.pack(pady=5)
+        self.text_top.pack(pady=5,padx=20)
 
         self.text_bot = tkinter.Label(master=self.main_canvas, background="snow3", text="I should change...",
                              font=('Consolas', 15), width=50, height=10, wraplength=400)
-        self.text_bot.pack(pady=5)
+        self.text_bot.pack(pady=5, padx=20)
 
         self.entry_line = tkinter.Entry(master=self.main_canvas, background="snow3", width=50)
-        self.entry_line.bind("<Return>", get_input(self))
-        self.entry_line.pack(pady=2)
+        self.entry_line.bind("<Return>", self.get_input)
+        self.entry_line.pack(pady=2, padx=20)
 
         self.button_1 = tkinter.Button(master=self.main_canvas, text=" Restart ", font=('Consolas', 15), bg="white", anchor="w",
                               command=self.root.destroy)
         self.button_1.pack(padx=20, pady=3)
 
+        self.selected = []
         self.root.mainloop()
 
+    def get_input(self, event) -> None:
+        if self.entry_line.get() == "":
+            return
 
-def get_input(self) -> None:
-    self.selected: str = self.entry_line.get().lower().strip()
-    self.entry_line.delete(0, tkinter.END)
-    return self.selected
+        self.selected.append(self.entry_line.get().lower().strip())
+        if self.selected:
+            print(f'{self.selected}')
+        self.entry_line.delete(0, tkinter.END)
+        return menu(self.selected, self)
 
-def sequence(selected) -> None:
-    menu(selected)
+    def update_bottom(self, bottom) -> None:
+        self.bottom = bottom
+        self.text_bot.config(text=f'{self.bottom}')
 
-def update_bottom(self, bottom) -> None:
-    self.text_bot.config(text=f'{bottom}')
-
-def update_top(self, top) -> None:
-    self.text_top.config(text=f'{top}')
+    def update_top(self, top) -> None:
+        self.top = top
+        self.text_top.config(text=f'{self.top}')
 
 
 # ------------------------------------------|
