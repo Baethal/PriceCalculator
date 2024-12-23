@@ -1,8 +1,11 @@
 import tkinter
+import asyncio
 from typing import List
 from typing import Any
 import math
 from tkinter import *
+import time
+import threading
 
 # import curses
 # stdscr = curses.initscr()
@@ -574,8 +577,9 @@ def total(self: float) -> None:
     restart = input("-> Press Enter to restart <-\n")
     return main()
 
-def rotulo_price(rtype: str, pie_cuadrado: float, rcolumn: int) -> None:
-    match rtype:
+def rotulo_price(selected, gui_instance) -> None:
+
+    match selected[1]:
         case "b":
             rprice: float = pie_cuadrado * banner_price[rcolumn]
             return total(rprice)
@@ -602,54 +606,58 @@ def rotulo_price(rtype: str, pie_cuadrado: float, rcolumn: int) -> None:
             rprice: float = pie_cuadrado * vynil_corte_price
             return total(rprice)
 
-def rotulo_type_selection() -> None:
-    update_top= input(f"What type of sign?: ")
-    rotulo_low: str = rotulo.lower()
+# Selected[1] = Type
+def rotulo_type_selection(selected, gui_instance) -> None:
+    gui_instance.update_top("What type of sign?:")
+    while len(selected) < 2:
+        return
 
-    if rotulo_low == "b" or rotulo_low == "banner" or rotulo_low == "bnr":
-        rtype: str = "b"
-        return rotulo_size_selection(rtype)
-    elif rotulo_low == "d" or rotulo_low == "dboard" or rotulo_low == "db":
-        rtype: str = "d"
-        return rotulo_size_selection(rtype)
-    elif rotulo_low == "v" or rotulo_low == "vy" or rotulo_low == "vynil":
-        rtype: str = "v"
-        return rotulo_size_selection(rtype)
-    elif rotulo_low == "pvc18" or rotulo_low == "p18" or rotulo_low == "18":
-        rtype: str = "p18"
-        return rotulo_size_selection(rtype)
-    elif rotulo_low == "pvc14" or rotulo_low == "p14" or rotulo_low == "14":
-        rtype: str = "p14"
-        return rotulo_size_selection(rtype)
-    elif rotulo_low == "pvc12" or rotulo_low == "p12" or rotulo_low == "12":
-        rtype: str = "p12"
-        return rotulo_size_selection(rtype)
-    elif rotulo_low == "p" or rotulo_low == "poster" or rotulo_low == "pos":
-        rtype: str = "p"
-        return rotulo_size_selection(rtype)
-    elif rotulo_low == "vyc" or rotulo_low == "vynil de corte" or rotulo_low == "vynilcorte":
-        rtype: str = "vyc"
-        return rotulo_size_selection(rtype)
-    else:
-        print("Error when choosing your desired sign. Restarting Program....")
-        return main()
+    match selected[1]:
+        case "b" | "banner" | "bnr":
+            selected[1] = "b"
+            gui_instance.update_bottom(f'You have choosen: Banner')
+        case "d" | "dboard" | "db":
+            selected[1] = "d"
+            gui_instance.update_bottom(f'You have choosen: Dboard')
+        case "v" | "vy" | "vynil":
+            selected[1] = "v"
+            gui_instance.update_bottom(f'You have choosen: Vynil')
 
-def rotulo_discount(rtype: str, pie_cuadrado: float) -> float:
-  rdiscount: str = input("Do you want a discount?   C for Church   D for Dealer   N for No Discount\nSelection: ")
-  rdiscount_lower: str = rdiscount.lower()
+        case "pvc18" | "banner" | "18":
+            selected[1] = "p18"
+            gui_instance.update_bottom(f'You have choosen: PVC 1/8')
+        case "pvc14" | "banner" | "14":
+            selected[1] = "p14"
+            gui_instance.update_bottom(f'You have choosen: PVC 1/4')
+        case "pvc12" | "banner" | "12":
+            selected[1] = "p12"
+            gui_instance.update_bottom(f'You have choosen: PVC 1/2')
+        case "p" | "poster" | "pos":
+            selected[1] = "p"
+            gui_instance.update_bottom(f'You have choosen: Poster')
+        case _:
+            gui_instance.update_bottom("Error when choosing your desired sign. Restarting Program....")
+            selected.clear()
+            return main()
+    return rotulo_size_selection(selected, gui_instance)
 
-  if rdiscount_lower == "c" or rdiscount_lower == "church":
-        rdiscount = "c"
-        return rotulo_pc(rtype, pie_cuadrado, rdiscount)
+# Selected[4] = Discount
+def rotulo_discount(selected, gui_instance) -> float:
+    # This input is Selected[5]
+  gui_instance.update_top("Do you want a discount?   C for Church   D for Dealer   N for No Discount\nSelection: ")
+    while len(selected) < 5: # Loops until selected updates, extending its index by 1 using get_input()
+        return
 
-  elif rdiscount_lower == "d" or rdiscount_lower == "dealer":
-        rdiscount = "d"
-        return rotulo_pc(rtype, pie_cuadrado, rdiscount)
-  else:
-        rdiscount = "n"
-        return rotulo_pc(rtype, pie_cuadrado, rdiscount)
+    match selected[4]:
+        case "c" | "church":
+            selected[4] = "c"
+        case "d" | "dealer":
+            selected[4] = "d"
+        case _:
+            selected[4] = "n"
+    return rotulo_pc(selected, gui_instance)
 
-def rotulo_pc(rtype: str, pie_cuadrado: float, rdiscount: str, ) -> Any:
+def rotulo_pc(rtype: str, pie_cuadrado: float, rdiscount: str, ) -> None:
 
     if rtype == "vyc":
         rcolumn = 0
@@ -684,54 +692,46 @@ def rotulo_pc(rtype: str, pie_cuadrado: float, rdiscount: str, ) -> Any:
         print("ERROR - Please use appropiate numbers")
         return main()
 
-def rotulo_size_selection(rtype: str) -> None:
-    rsize_1: float = float(input(f"What's the first measurement? "))
-    rsize_2: float = float(input(f"What's the second measurement? "))
+# Selected[2] x Selected[3] = Pie Cuadrado
+def rotulo_size_selection(selected, gui_instance) -> None:
+    gui_instance.update_top("What's the first measurement?")
+    while len(selected) < 3: # Loops until selected updates, extending its index by 1 using get_input()
+        return
+    gui_instance.update_bottom(f'Size selected:{selected[2]}x...')
 
-    if rtype == "vcy":
-        pie_cuadrado: float = rsize_1 * rsize_2
-        return rotulo_discount(rtype, pie_cuadrado)
+    gui_instance.update_top("What's the second measurement?")
+    while len(selected) < 4: # Loops until selected updates, extending its index by 1 using get_input()
+        return
+    gui_instance.update_bottom(f'Size selected: {selected[2]} x {selected[3]}')
+    return rotulo_discount(selected, gui_instance)
 
-    else:
-        rt: float = rsize_1 * rsize_2
-        pie_cuadrado: float = rt / 144
-        return rotulo_discount(rtype, pie_cuadrado)
 
 # ------------------------------------------|
 # Start of Everything
 def menu(selected, gui_instance) -> None:
-
+    gui_instance.update_top("Please enter your estimation type")
     match selected[0]:
         case "fy"| "f" | "flyers":
-            bottom: str = "You have selected: Flyers"
-            gui_instance.update_bottom(bottom)
+            gui_instance.update_bottom("You have selected: Flyers")
             return
 
         case "r" | "rotulo":
-            bottom: str = "You have selected: Rotulos"
-            gui_instance.update_bottom(bottom)
-            return rotulo_type_selection()
+            gui_instance.update_bottom("You have selected: Rotulos")
+            return rotulo_type_selection(selected, gui_instance)
 
         case "b" | "business cards" | "bc":
-            bottom: str = "You have selected: Rotulos"
-            gui_instance.update_bottom(bottom)
-
+            gui_instance.update_bottom("You have selected: Rotulos")
 
         case "copy" | "c":
-            bottom: str = "You have selected: Copies"
-            gui_instance.update_bottom(bottom)
+            gui_instance.update_bottom("You have selected: Copies")
 
         case "ale" | "alejandra":
-            bottom: str = "You're not funny, Ale...\nI'm restarting this shit"
-            gui_instance.update_bottom(bottom)
+            selected.clear()
+            gui_instance.update_bottom("You're not funny, Ale...\nI'm restarting this shit")
 
         case _:
-            bottom: str = "Error"
             selected.clear()
-            gui_instance.update_bottom(bottom)
-
-
-
+            gui_instance.update_bottom("Error, Please notify Baethal if you get this message")
 
 # --------------------------------------------------------
 #                  APPLICATION MODULES
@@ -773,7 +773,7 @@ class GUI:
 
     def get_input(self, event) -> None:
         if self.entry_line.get() == "":
-            return
+          return
 
         self.selected.append(self.entry_line.get().lower().strip())
         if self.selected:
