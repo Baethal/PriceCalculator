@@ -1,5 +1,4 @@
 import tkinter
-import asyncio
 from typing import List
 from typing import Any
 import math
@@ -569,49 +568,41 @@ pvc12_price: List[float] = [8.75, 8.50, 8.00, 7.75, 7.25, 6.00]
 poster_price: List[float] = [3.25, 3.10, 3.00, 2.75, 2.55, 2.25]
 vynil_corte_price: float = 0.15
 
-def total(self: float) -> None:
+def total(rprice, gui_instance, selected) -> None:
     tax: float = 1.115
-    total_taxed: float = self * tax
-    print(f'1   Your price: ${self:.2f}')
-    print(f'2   Your taxed price: ${total_taxed:.2f}\n')
-    restart = input("-> Press Enter to restart <-\n")
-    return main()
+    total_taxed: float = rprice * tax
+    gui_instance.update_top(f'Your price: ${rprice:.2f}\nYour taxed price: ${total_taxed:.2f}')
+    gui_instance.update_bottom(f'Click Restart')
+    while len(selected) < 6:  # Loops until selected updates, extending its index by 1 using get_input()
+        return
+    return menu()
 
-def rotulo_price(selected, gui_instance) -> None:
-
+def rotulo_price(selected, pie_cuadrado, rcolumn, gui_instance) -> None:
+    rprice = None
     match selected[1]:
         case "b":
             rprice: float = pie_cuadrado * banner_price[rcolumn]
-            return total(rprice)
         case "d":
             rprice: float = pie_cuadrado * dboard_price[rcolumn]
-            return total(rprice)
         case "v":
             rprice: float = pie_cuadrado * vynil_price[rcolumn]
-            return total(rprice)
         case "p18":
             rprice: float = pie_cuadrado * pvc18_price[rcolumn]
-            return total(rprice)
         case "p14":
             rprice: float = pie_cuadrado * pvc14_price[rcolumn]
-            return total(rprice)
         case "p12":
             rprice: float = pie_cuadrado * pvc12_price[rcolumn]
-            return total(rprice)
         case "p":
             rprice: float = pie_cuadrado * poster_price[rcolumn]
-            return total(rprice)
         case "vyc":
-            print(f'{pie_cuadrado}')
             rprice: float = pie_cuadrado * vynil_corte_price
-            return total(rprice)
+    return total(rprice, gui_instance, selected)
 
 # Selected[1] = Type
 def rotulo_type_selection(selected, gui_instance) -> None:
     gui_instance.update_top("What type of sign?:")
     while len(selected) < 2:
         return
-
     match selected[1]:
         case "b" | "banner" | "bnr":
             selected[1] = "b"
@@ -622,30 +613,29 @@ def rotulo_type_selection(selected, gui_instance) -> None:
         case "v" | "vy" | "vynil":
             selected[1] = "v"
             gui_instance.update_bottom(f'You have choosen: Vynil')
-
-        case "pvc18" | "banner" | "18":
+        case "pvc18" | "18":
             selected[1] = "p18"
             gui_instance.update_bottom(f'You have choosen: PVC 1/8')
-        case "pvc14" | "banner" | "14":
+        case "pvc14" | "14":
             selected[1] = "p14"
             gui_instance.update_bottom(f'You have choosen: PVC 1/4')
-        case "pvc12" | "banner" | "12":
+        case "pvc12" | "12":
             selected[1] = "p12"
             gui_instance.update_bottom(f'You have choosen: PVC 1/2')
         case "p" | "poster" | "pos":
             selected[1] = "p"
             gui_instance.update_bottom(f'You have choosen: Poster')
         case _:
-            gui_instance.update_bottom("Error when choosing your desired sign. Restarting Program....")
+            gui_instance.update_bottom("Error when choosing your desired type\nRestarting Program")
             selected.clear()
-            return main()
+            return gui_instance.restart()
     return rotulo_size_selection(selected, gui_instance)
 
 # Selected[4] = Discount
 def rotulo_discount(selected, gui_instance) -> float:
     # This input is Selected[5]
-  gui_instance.update_top("Do you want a discount?   C for Church   D for Dealer   N for No Discount\nSelection: ")
-    while len(selected) < 5: # Loops until selected updates, extending its index by 1 using get_input()
+    gui_instance.update_top("Do you want a discount?\nC for Church\nD for Dealer\nN for No Discount\nSelection: ")
+    while len(selected) < 5:
         return
 
     match selected[4]:
@@ -657,59 +647,64 @@ def rotulo_discount(selected, gui_instance) -> float:
             selected[4] = "n"
     return rotulo_pc(selected, gui_instance)
 
-def rotulo_pc(rtype: str, pie_cuadrado: float, rdiscount: str, ) -> None:
-
-    if rtype == "vyc":
-        rcolumn = 0
-        return rotulo_price(rtype, pie_cuadrado, rcolumn)
-
+def rotulo_pc(selected, gui_instance) -> None:
+    pie_cuadrado = float(selected[2]) * float(selected[3])
+    pie_cuadrado = pie_cuadrado / 144
     pie_cuadrado = math.ceil(pie_cuadrado * 10) / 10.0
-    if rdiscount == "c":
+
+    if selected[4] == "c":
         rcolumn = -2
-        return rotulo_price(rtype, pie_cuadrado, rcolumn)
+        return rotulo_price(selected, pie_cuadrado, rcolumn, gui_instance)
 
-    elif rdiscount == "d":
+    elif selected[4] == "d":
         rcolumn = -1
-        return rotulo_price(rtype, pie_cuadrado, rcolumn)
-
-    elif pie_cuadrado >= 0 and pie_cuadrado <= 15:
-        rcolumn = 0
-        return rotulo_price(rtype, pie_cuadrado, rcolumn)
-
-    elif pie_cuadrado >= 16 and pie_cuadrado <= 31:
-        rcolumn = 1
-        return rotulo_price(rtype, pie_cuadrado, rcolumn)
-
-    elif pie_cuadrado >= 32 and pie_cuadrado <= 59:
-        rcolumn = 2
-        return rotulo_price(rtype, pie_cuadrado, rcolumn)
-
-    elif pie_cuadrado >= 60:
-        rcolumn = 3
-        return rotulo_price(rtype, pie_cuadrado, rcolumn)
+        return rotulo_price(selected, pie_cuadrado, rcolumn, gui_instance)
 
     else:
-        print("ERROR - Please use appropiate numbers")
-        return main()
+        if pie_cuadrado >= 0 and pie_cuadrado <= 15:
+            rcolumn = 0
+        elif pie_cuadrado >= 16 and pie_cuadrado <= 31:
+            rcolumn = 1
+        elif pie_cuadrado >= 32 and pie_cuadrado <= 59:
+            rcolumn = 2
+        elif pie_cuadrado >= 60:
+            rcolumn = 3
+        else:
+            gui_instance.update_bottom("ERROR - Please use appropiate numbers in Size Selection")
+    return rotulo_price(selected, pie_cuadrado, rcolumn, gui_instance)
 
 # Selected[2] x Selected[3] = Pie Cuadrado
 def rotulo_size_selection(selected, gui_instance) -> None:
+    print(f'This is the inputs transfered from rotulo_type: {selected}')
     gui_instance.update_top("What's the first measurement?")
     while len(selected) < 3: # Loops until selected updates, extending its index by 1 using get_input()
         return
-    gui_instance.update_bottom(f'Size selected:{selected[2]}x...')
+    try:
+        if float(selected[2]):
+            gui_instance.update_bottom(f'Size selected: {selected[2]} x ...')
+    except ValueError:
+        gui_instance.update_bottom(f'You must type a size in numbers')
+        return gui_instance.restart()
 
     gui_instance.update_top("What's the second measurement?")
     while len(selected) < 4: # Loops until selected updates, extending its index by 1 using get_input()
         return
-    gui_instance.update_bottom(f'Size selected: {selected[2]} x {selected[3]}')
-    return rotulo_discount(selected, gui_instance)
 
+    try:
+        if float(selected[3]):
+            gui_instance.update_bottom(f'Size selected: {selected[2]} x {selected[3]}')
+    except ValueError:
+        gui_instance.update_bottom(f'You must type a size in numbers')
+        return gui_instance.restart()
+
+    return rotulo_discount(selected, gui_instance)
 
 # ------------------------------------------|
 # Start of Everything
 def menu(selected, gui_instance) -> None:
     gui_instance.update_top("Please enter your estimation type")
+    gui_instance.update_bottom("Write your awnser in the entrybox and Press Enter to confirm")
+
     match selected[0]:
         case "fy"| "f" | "flyers":
             gui_instance.update_bottom("You have selected: Flyers")
@@ -756,7 +751,7 @@ class GUI:
                              font=('Consolas', 15), width=50, height=10, wraplength=400)
         self.text_top.pack(pady=5,padx=20)
 
-        self.text_bot = tkinter.Label(master=self.main_canvas, background="snow3", text="I should change...",
+        self.text_bot = tkinter.Label(master=self.main_canvas, background="snow3", text="Write your awnser in the entrybox and Press Enter to confirm",
                              font=('Consolas', 15), width=50, height=10, wraplength=400)
         self.text_bot.pack(pady=5, padx=20)
 
@@ -765,11 +760,16 @@ class GUI:
         self.entry_line.pack(pady=2, padx=20)
 
         self.button_1 = tkinter.Button(master=self.main_canvas, text=" Restart ", font=('Consolas', 15), bg="white", anchor="w",
-                              command=self.root.destroy)
+                              command=self.restart)
         self.button_1.pack(padx=20, pady=3)
 
         self.selected = []
         self.root.mainloop()
+
+    def restart(self):
+        self.selected.clear()
+        self.update_top("Select your quick estimation type:")
+        return self.get_input(self)
 
     def get_input(self, event) -> None:
         if self.entry_line.get() == "":
