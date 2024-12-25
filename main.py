@@ -521,6 +521,7 @@ def copy_sides(selected, gui_instance) -> None:
             selected[3]: "f"
             gui_instance.update_bottom("You have choosen: One Sided")
     return copy_type(selected, gui_instance)
+
 def copy_color_select(selected, gui_instance) -> None:
     copies_color: str = input("Color? [y or n] ")
     copies_color_lower: str = copies_color.lower()
@@ -531,7 +532,7 @@ def copy_color_select(selected, gui_instance) -> None:
         color = False
         return copy_sides(csize, color)
     gui_instance.update_top("Does it have color? [y or n] ")
-    while len(selected) > 3:
+    while len(selected) > 2:
         return
     match selected[2]:
         case "y" | "yes":
