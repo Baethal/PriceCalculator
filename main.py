@@ -308,9 +308,11 @@ def copy_calculation(csize: str, color: bool, ctype: str, cquantity: int, church
             ccolumn = 6
             return copy_price(csize, ctype, cquantity, ccolumn)
 
-def copy_type(csize: str, color: bool, twosides: bool) -> None:
-    ctype: str = input("What type of paper are you using? ")
-    ctype_low = ctype.lower()
+def copy_type(selected, gui_instance) -> None:
+    gui_instance.update_top("What type of paper are you using? ")
+    while len(selected) < 4:
+        return
+
     ctype_error = "Your paper size is unavailable for this type of paper\nRestarting Type Selection..."
 
     # Checking for "n" or "normal"
@@ -504,17 +506,22 @@ def copy_quantity_church(csize: str, ctype: str, color: bool) -> None:
         church = False
         return copy_calculation(csize, color, ctype, cquantity, church)
 
-def copy_sides(csize: str, color: bool) -> None:
-    twosides: str = input("2 Sided? [y or n] ")
-    twosides_low: str = twosides.lower()
-    if twosides_low == "y" or twosides_low == "yes":
-        twosides = True
-        return copy_type(csize, color, twosides)
-    else:
-        twosides = False
-        return copy_type(csize, color, twosides)
-
-def copy_color_select(csize: str) -> None:
+def copy_sides(selected, gui_instance) -> None:
+    gui_instance.update_top("Will it be twosided? [y or n] ")
+    while len(selected) > 4:
+        return
+    match selected[3]:
+        case "y" | "yes":
+            selected[3]: "t"
+            gui_instance.update_bottom("You have choosen: Two Sided")
+        case "n" | "no":
+            selected[3]: "f"
+            gui_instance.update_bottom("You have choosen: One Sided")
+        case _:
+            selected[3]: "f"
+            gui_instance.update_bottom("You have choosen: One Sided")
+    return copy_type(selected, gui_instance)
+def copy_color_select(selected, gui_instance) -> None:
     copies_color: str = input("Color? [y or n] ")
     copies_color_lower: str = copies_color.lower()
     if copies_color.lower() == "y" or copies_color.lower() == "yes":
@@ -523,34 +530,42 @@ def copy_color_select(csize: str) -> None:
     else:
         color = False
         return copy_sides(csize, color)
-
+    gui_instance.update_top("Does it have color? [y or n] ")
+    while len(selected) > 3:
+        return
+    match selected[2]:
+        case "y" | "yes":
+            selected[2]: "t"
+            gui_instance.update_bottom("You have choosen: Color")
+        case "n" | "no":
+            selected[2]: "f"
+            gui_instance.update_bottom("You have choosen: No Color")
+        case _:
+            selected[2]: "f"
+            gui_instance.update_bottom("You have choosen: No Color")
+    return copy_sides(selected, gui_instance)
 # Returns: csize
-def copy_size_select() -> None:
-    csize: str = input("What's the size? ")
-    csize_lower: str = csize.lower()
-    if csize == "8" or csize == "8.5x11" or csize == "8511" or csize_lower == "lt":
-        csize = "8511"
-        print("You have choosen: 8.5x11")
-        return copy_color_select(csize)
-
-    elif csize == "14" or csize == "8.5x14" or csize == "8514" or csize_lower == "lg":
-        csize = "8514"
-        print("You have choosen: 8.5x14")
-        return copy_color_select(csize)
-
-    elif csize == "17" or csize == "11x17" or csize == "1117":
-        csize = "1117"
-        print("You have choosen: 11x17")
-        return copy_color_select(csize)
-
-    elif csize == "12" or csize == "12x18" or csize == "1218":
-        csize = "1218"
-        print('You have choosen: 12x18')
-        return copy_color_select(csize)
-
-    else:
-        print("Error! Restarting...")
-        return menu()
+def copy_size_select(selected, gui_instance) -> None:
+    gui_instance.update_top("What's the size? ")
+    while len(selected) > 2:
+        return
+    match selected[1]:
+        case "8" | "8.5x11" | "8511" | "lt":
+            selected[1]: "8511"
+            gui_instance.update_bottom("You have choosen: 8.5x11")
+        case "14" | "8.5x14" | "8514" | "lg":
+            selected[1]: "8514"
+            gui_instance.update_bottom("You have choosen: 8.5x14")
+        case "17" | "11x17" | "1117":
+            selected[1]: "1117"
+            gui_instance.update_bottom("You have choosen: 11x17")
+        case "12" | "12x18" | "1218":
+            selected[1]: '1218'
+            gui_instance.update_bottom('You have choosen: 12x18')
+        case _:
+            gui_instance.update_bottom("Error! Restarting...")
+            return gui_instance.restart()
+    return copy_color_select(selected, gui_instance)
 
 
 # |-----------------------------------------|
@@ -613,13 +628,13 @@ def rotulo_type_selection(selected, gui_instance) -> None:
         case "v" | "vy" | "vynil":
             selected[1] = "v"
             gui_instance.update_bottom(f'You have choosen: Vynil')
-        case "pvc18" | "18":
+        case "pvc18" | "18" | "p18":
             selected[1] = "p18"
             gui_instance.update_bottom(f'You have choosen: PVC 1/8')
-        case "pvc14" | "14":
+        case "pvc14" | "14" | "p14":
             selected[1] = "p14"
             gui_instance.update_bottom(f'You have choosen: PVC 1/4')
-        case "pvc12" | "12":
+        case "pvc12" | "12" | "p12":
             selected[1] = "p12"
             gui_instance.update_bottom(f'You have choosen: PVC 1/2')
         case "p" | "poster" | "pos":
@@ -719,6 +734,7 @@ def menu(selected, gui_instance) -> None:
 
         case "copy" | "c":
             gui_instance.update_bottom("You have selected: Copies")
+            return copy_size_select(selected, gui_instance)
 
         case "ale" | "alejandra":
             selected.clear()
