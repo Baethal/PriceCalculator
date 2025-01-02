@@ -674,9 +674,7 @@ def rotulo_pc(rtype: str, pie_cuadrado: float, rdiscount: str, quantity: float) 
         return rotulo_price(rtype, pie_cuadrado, rcolumn, quantity)
 
     pie_cuadrado = math.ceil(pie_cuadrado * 10) / 10.0
-    print(f'DEBUGING: {pie_cuadrado}')
     total_cuadrado = quantity * pie_cuadrado
-    print(f'DEBUGING STAGE 2: {total_cuadrado}')
 
     if rdiscount == "c":
         rcolumn = -2
