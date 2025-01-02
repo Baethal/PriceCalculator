@@ -564,37 +564,51 @@ pvc12_price: List[float] = [8.75, 8.50, 8.00, 7.75, 7.25, 6.00]
 poster_price: List[float] = [3.25, 3.10, 3.00, 2.75, 2.55, 2.25]
 vynil_corte_price: float = 0.15
 
-def total(self: float) -> None:
+def total(self: float, quantity=1) -> None:
     tax: float = 1.115
-    total_taxed: float = self * tax
-    print(f'1   Your price: ${self:.2f}')
-    print(f'2   Your taxed price: ${total_taxed:.2f}\n')
+    total: float = self
+    total_taxed: float = total * tax
+    print(f'-------------------------------')
+    print(f'---->   *   RESULTS   *   <----')
+    print(f'-------------------------------\n')
+    print(f'Your price for each: ${self:.2f}')
+    print(f'Your taxed price for each: ${total_taxed:.2f}\n')
+
+    if quantity > 1:
+        total: float = total * quantity
+        total_taxed: float = total * tax
+        print(f'Your total price for {quantity} is: ${total:.2f}')
+        print(f'Your taxed price for {quantity} is: ${total_taxed:.2f}\n')
+    restart()
+
+def restart() -> None:
     restart = input("-> Press Enter to restart <-\n")
+    print(f'\n\n')
     return main()
 
-def rotulo_price(rtype: str, pie_cuadrado: float, rcolumn: int) -> None:
+def rotulo_price(rtype: str, pie_cuadrado: float, rcolumn: int, quantity: float) -> None:
     match rtype:
         case "b":
             rprice: float = pie_cuadrado * banner_price[rcolumn]
-            return total(rprice)
+            return total(rprice, quantity)
         case "d":
             rprice: float = pie_cuadrado * dboard_price[rcolumn]
-            return total(rprice)
+            return total(rprice, quantity)
         case "v":
             rprice: float = pie_cuadrado * vynil_price[rcolumn]
-            return total(rprice)
+            return total(rprice, quantity)
         case "p18":
             rprice: float = pie_cuadrado * pvc18_price[rcolumn]
-            return total(rprice)
+            return total(rprice, quantity)
         case "p14":
             rprice: float = pie_cuadrado * pvc14_price[rcolumn]
-            return total(rprice)
+            return total(rprice, quantity)
         case "p12":
             rprice: float = pie_cuadrado * pvc12_price[rcolumn]
-            return total(rprice)
+            return total(rprice, quantity)
         case "p":
             rprice: float = pie_cuadrado * poster_price[rcolumn]
-            return total(rprice)
+            return total(rprice, quantity)
         case "vyc":
             print(f'{pie_cuadrado}')
             rprice: float = pie_cuadrado * vynil_corte_price
@@ -636,47 +650,58 @@ def rotulo_discount(rtype: str, pie_cuadrado: float) -> float:
   rdiscount: str = input("Do you want a discount?   C for Church   D for Dealer   N for No Discount\nSelection: ")
   rdiscount_lower: str = rdiscount.lower()
 
+
   if rdiscount_lower == "c" or rdiscount_lower == "church":
         rdiscount = "c"
-        return rotulo_pc(rtype, pie_cuadrado, rdiscount)
+        return rotulo_quantity(rtype, pie_cuadrado, rdiscount)
 
   elif rdiscount_lower == "d" or rdiscount_lower == "dealer":
         rdiscount = "d"
-        return rotulo_pc(rtype, pie_cuadrado, rdiscount)
+        return rotulo_quantity(rtype, pie_cuadrado, rdiscount)
   else:
         rdiscount = "n"
-        return rotulo_pc(rtype, pie_cuadrado, rdiscount)
+        return rotulo_quantity(rtype, pie_cuadrado, rdiscount)
 
-def rotulo_pc(rtype: str, pie_cuadrado: float, rdiscount: str, ) -> Any:
+def rotulo_quantity(rtype: str, pie_cuadrado: float, rdiscount: str) -> None:
+    quantity: float = float(input("How many? "))
+    return rotulo_pc(rtype, pie_cuadrado, rdiscount, quantity)
+
+
+def rotulo_pc(rtype: str, pie_cuadrado: float, rdiscount: str, quantity: float) -> None:
 
     if rtype == "vyc":
         rcolumn = 0
-        return rotulo_price(rtype, pie_cuadrado, rcolumn)
+        return rotulo_price(rtype, pie_cuadrado, rcolumn, quantity)
 
     pie_cuadrado = math.ceil(pie_cuadrado * 10) / 10.0
+    print(f'DEBUGING: {pie_cuadrado}')
+    total_cuadrado = quantity * pie_cuadrado
+    print(f'DEBUGING STAGE 2: {total_cuadrado}')
+
     if rdiscount == "c":
         rcolumn = -2
-        return rotulo_price(rtype, pie_cuadrado, rcolumn)
+        return rotulo_price(rtype, pie_cuadrado, rcolumn, quantity)
+
 
     elif rdiscount == "d":
         rcolumn = -1
-        return rotulo_price(rtype, pie_cuadrado, rcolumn)
+        return rotulo_price(rtype, pie_cuadrado, rcolumn, quantity)
 
-    elif pie_cuadrado >= 0 and pie_cuadrado <= 15:
+    elif total_cuadrado >= 0 and total_cuadrado <= 15:
         rcolumn = 0
-        return rotulo_price(rtype, pie_cuadrado, rcolumn)
+        return rotulo_price(rtype, pie_cuadrado, rcolumn, quantity)
 
-    elif pie_cuadrado >= 16 and pie_cuadrado <= 31:
+    elif total_cuadrado >= 16 and total_cuadrado <= 31:
         rcolumn = 1
-        return rotulo_price(rtype, pie_cuadrado, rcolumn)
+        return rotulo_price(rtype, pie_cuadrado, rcolumn, quantity)
 
-    elif pie_cuadrado >= 32 and pie_cuadrado <= 59:
+    elif total_cuadrado >= 32 and total_cuadrado <= 59:
         rcolumn = 2
-        return rotulo_price(rtype, pie_cuadrado, rcolumn)
+        return rotulo_price(rtype, pie_cuadrado, rcolumn, quantity)
 
-    elif pie_cuadrado >= 60:
+    elif total_cuadrado >= 60:
         rcolumn = 3
-        return rotulo_price(rtype, pie_cuadrado, rcolumn)
+        return rotulo_price(rtype, pie_cuadrado, rcolumn, quantity)
 
     else:
         print("ERROR - Please use appropiate numbers")
