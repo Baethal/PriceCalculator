@@ -612,7 +612,7 @@ def rotulo_price(rtype: str, pie_cuadrado: float, rcolumn: int, quantity: float)
         case "vyc":
             print(f'{pie_cuadrado}')
             rprice: float = pie_cuadrado * vynil_corte_price
-            return total(rprice)
+            return total(rprice, quantity)
 
 def rotulo_type_selection() -> None:
     rotulo: str = input(f"What type of sign?: ")
@@ -663,7 +663,11 @@ def rotulo_discount(rtype: str, pie_cuadrado: float) -> float:
         return rotulo_quantity(rtype, pie_cuadrado, rdiscount)
 
 def rotulo_quantity(rtype: str, pie_cuadrado: float, rdiscount: str) -> None:
-    quantity: float = float(input("How many? "))
+    try:
+        quantity: float = float(input("How many? "))
+    except ValueError:
+        print("Error when choosing your quantity. Restarting Program....")
+        return main()
     return rotulo_pc(rtype, pie_cuadrado, rdiscount, quantity)
 
 
