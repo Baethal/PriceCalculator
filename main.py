@@ -310,7 +310,7 @@ def copy_type(csize: str, color: bool, twosides: bool) -> None:
     ctype_error = "Your paper size is unavailable for this type of paper\nRestarting Type Selection..."
 
     # Checking for "n" or "normal"
-    if ctype_low == "n" or ctype_low == "normal":
+    if ctype_low == "n" or ctype_low == "normal" or ctype_low == "r" or ctype_low == "regular":
         if color and twosides:
             ctype = "ntt"
         elif color and not twosides:
@@ -324,7 +324,7 @@ def copy_type(csize: str, color: bool, twosides: bool) -> None:
     # Checking for "m" or "matte"
     elif ctype_low == "m" or ctype_low == "matte":
         if csize != "8511" and csize != "1117":
-            print(f'{ctype_error}')
+            gui_instance.update_bottom(f'{ctype_error}')
             return copy_type(csize, color, twosides)
         else:
             if color and twosides:
@@ -343,7 +343,7 @@ def copy_type(csize: str, color: bool, twosides: bool) -> None:
     # Checking for "g" or "gloss" or "glossy"
     elif ctype_low == "g" or ctype_low == "gloss" or ctype_low == "glossy":
         if csize == "8514":
-            print(f'{ctype_error}')
+            gui_instance.update_bottom(f'{ctype_error}')
             return copy_type(csize, color, twosides)
         else:
             if color and twosides:
@@ -359,7 +359,7 @@ def copy_type(csize: str, color: bool, twosides: bool) -> None:
     # Checking for "t" or "texto"
     elif ctype_low == "t" or ctype_low == "texto":
         if csize == "8514":
-            print(f"{ctype_error}")
+            gui_instance.update_bottom(f"{ctype_error}")
             return copy_type(csize, color, twosides)
         else:
             if color and twosides:
@@ -375,33 +375,33 @@ def copy_type(csize: str, color: bool, twosides: bool) -> None:
     # Checking for "th" or "thermatac" or "therma"
     elif ctype_low == "th" or ctype_low == "thermatac" or ctype_low == "therma":
         if csize != "1218":
-            print(f"{ctype_error}")
+            gui_instance.update_bottom(f"{ctype_error}")
             return copy_type(csize, color, twosides)
         else:
             if color and twosides:
-                print(f"{ctype_error}")
+                gui_instance.update_bottom(f"{ctype_error}")
                 return copy_type(csize, color, twosides)
             elif color and not twosides:
                 ctype = "thtf"
                 return copy_quantity_church(csize, ctype, color)
             else:
-                print(f"{ctype_error}")
+                gui_instance.update_bottom(f"{ctype_error}")
                 return copy_type(csize, color, twosides)
 
     # Checking for "b" or "bumper" or "bumpersticker"
     elif ctype_low == "b" or ctype_low == "bumper" or ctype_low == "bumpersticker":
         if csize != "8511" and csize != "1117":
-            print(f'You cannot have 2sided bumperstickers')
+            gui_instance.update_bottom(f'You cannot have 2sided bumperstickers')
             return copy_type(csize, color, twosides)
         else:
             if color and twosides:
-                print(f'{ctype_error}')
+                gui_instance.update_bottom(f'{ctype_error}')
                 return copy_type(csize, color, twosides)
             elif color and not twosides:
                 ctype = "btf"
                 return copy_quantity_church(csize, ctype, color)
             else:
-                print(f'{ctype_error}')
+                gui_instance.update_bottom(f'{ctype_error}')
                 return copy_type(csize, color, twosides)
 
     # Checking for "s" or "synap"
@@ -414,16 +414,16 @@ def copy_type(csize: str, color: bool, twosides: bool) -> None:
                 ctype = "stf"
                 return copy_quantity_church(csize, ctype, color)
             else:
-                print(f'{ctype_error}')
+                gui_instance.update_bottom(f'{ctype_error}')
                 return copy_type(csize, color, twosides)
         else:
-            print(f'{ctype_error}')
+            gui_instance.update_bottom(f'{ctype_error}')
             return copy_type(csize, color, twosides)
 
     # Checking for "120" or "gloss 120" or "gloss120"
     elif ctype_low == "120" or ctype_low == "gloss 120" or ctype_low == "gloss120":
         if csize != "1218":
-            print(f'{ctype_error}')
+            gui_instance.update_bottom(f'{ctype_error}')
             return copy_type(csize, color, twosides)
         else:
             if color and twosides:
@@ -433,13 +433,13 @@ def copy_type(csize: str, color: bool, twosides: bool) -> None:
                 ctype = "120tf"
                 return copy_quantity_church(csize, ctype, color)
             else:
-                print(f'{ctype_error}')
+                gui_instance.update_bottom(f'{ctype_error}')
                 return copy_type(csize, color, twosides)
 
     # Checking for "p" or "pearlado" or "pearl"
     elif ctype_low == "p" or ctype_low == "pearlado" or ctype_low == "pearl":
         if csize != "8511" and csize != "1218":
-            print(f'{ctype_error}')
+            gui_instance.update_bottom(f'{ctype_error}')
             return copy_type(csize, color, twosides)
         else:
             if color and twosides:
@@ -449,13 +449,13 @@ def copy_type(csize: str, color: bool, twosides: bool) -> None:
                 ctype = "ptf"
                 return copy_quantity_church(csize, ctype, color)
             else:
-                print(f'{ctype_error}')
+                gui_instance.update_bottom(f'{ctype_error}')
                 return copy_type(csize, color, twosides)
 
     # Checking for "h" or "hilo"
     elif ctype_low == "h" or ctype_low == "hilo":
         if csize == "8514":
-            print(f'{ctype_error}')
+            gui_instance.update_bottom(f'{ctype_error}')
             return copy_type(csize, color, twosides)
         else:
             if color and twosides:
@@ -465,13 +465,13 @@ def copy_type(csize: str, color: bool, twosides: bool) -> None:
                 ctype = "htf"
                 return copy_quantity_church(csize, ctype, color)
             else:
-                print(f'{ctype_error}')
+                gui_instance.update_bottom(f'{ctype_error}')
                 return copy_type(csize, color, twosides)
 
     # Checking for "hl" or "hilocover" or "hilo cover"
     elif ctype_low == "hl" or ctype_low == "hilocover" or ctype_low == "hilo cover":
         if csize == "8514" or csize == "8511":
-            print(f'{ctype_error}')
+            gui_instance.update_bottom(f'{ctype_error}')
             return copy_type(csize, color, twosides)
         else:
             if color and twosides:
@@ -481,11 +481,11 @@ def copy_type(csize: str, color: bool, twosides: bool) -> None:
                 ctype = "hltf"
                 return copy_quantity_church(csize, ctype, color)
             else:
-                print(f'{ctype_error}')
+                gui_instance.update_bottom(f'{ctype_error}')
                 return copy_type(csize, color, twosides)
 
     else:
-        print("Invalid paper type selected")
+        gui_instance.update_bottom("Invalid paper type selected")
         return copy_type(csize, color, twosides)
 
 def copy_quantity_church(csize: str, ctype: str, color: bool) -> None:
@@ -547,7 +547,11 @@ def copy_size_select() -> None:
     else:
         print("Error! Restarting...")
         return menu()
-
+    ctype: str = selected[3]
+    ctype_low: str = ctype.lower()
+    color: bool = selected[2]
+    twosides: bool = selected[3]
+    csize: str = selected[1]
 
 # |-----------------------------------------|
 #                ROTULACION
@@ -670,7 +674,6 @@ def rotulo_quantity(rtype: str, pie_cuadrado: float, rdiscount: str) -> None:
         return main()
     return rotulo_pc(rtype, pie_cuadrado, rdiscount, quantity)
 
-
 def rotulo_pc(rtype: str, pie_cuadrado: float, rdiscount: str, quantity: float) -> None:
 
     if rtype == "vyc":
@@ -722,15 +725,72 @@ def rotulo_size_selection(rtype: str) -> None:
         pie_cuadrado: float = rt / 144
         return rotulo_discount(rtype, pie_cuadrado)
 
+
+# |-----------------------------------------|
+# |--------------> FLYERS <-----------------|
+# |-----------------------------------------|
+
+def flyers_menu() -> None:
+    print(f'-------------------------------'
+          f'-------- FLYER PRICES ---------'
+          f'-------------------------------\n')
+
+    flyers_14_1S = print(
+        f'----> Flyers 1/4 <------\n      [1 SIDED]    \n'
+          f'  (50) = 4.99$\n'
+          f'  (100) = 9.99$\n'
+          f'  (200) = 14.99$\n'
+          f'  (250) = 19.99$\n'
+          f'  (300) = 24.99$\n'
+          f'  (500) = 29.99$\n'
+          f'  (1,000) = 44.99$\n'
+          f'  (1,500) = 64.99$\n'
+          f'  (2,000) = 79.99$\n'
+          f'  (3,000) = 109.99$\n'
+          f'  (4,000) = 149.99$\n'
+          f'  (5,000) = 189.99$\n'
+          f'  (10,000) = 374.99$\n'
+          f'  (20,000) = 499.99$\n')
+
+    flyers_14_2S = print(
+        f'----> Flyers 1/4 <------\n     [2 SIDED]    \n'
+          f'  (50) = 9.99$\n'
+          f'  (100) = 14.99$\n'
+          f'  (200) = 24.99$\n'
+          f'  (500) = 44.99$\n'
+          f'  (1,000) = 74.99$\n'
+          f'  (1,500) = 99.99$\n'
+          f'  (2,000) = 114.99$\n'
+          f'  (3,000) = 174.99$\n'
+          f'  (4,000) = 229.99$\n'
+          f'  (5,000) = 289.99$\n')
+
+    flyers_12_1S = print(
+        f'----> Flyers 1/2 <------\n      [1 SIDED]    \n'
+          f'  (50) = MISSING!\n'
+          f'  (100) = 14.99$\n'
+          f'  (200) = 29.99$\n'
+          f'  (500) = 59.99$\n'
+          f'  (1,000) = 84.99$\n'
+          f'  (2,000) = 149.99$\n'
+          f'  (3,000) = 219.99$\n')
+
+    flyers_12_2S = print(
+        f'----> Flyers 1/2 <------\n      [2 SIDED]    \n'
+    )
 # ------------------------------------------|
 # Start of Everything
 def menu() -> None:
     selected: str = input("|-----------------------------------------|\n"
                           "    EZIMPRESS AUTOMATIC ESTIMATION 5000\n"
                           "|-----------------------------------------|\n"
+                          "> v1.2\n"
+                          "> by Baethal\n"
                           "Select your quick estimation type: ")
     if selected == "fy" or selected == "f":
-        return print("You have choosen: Flyers")
+        print("You have choosen: Flyers")
+        flyers_menu()
+        return
 
     elif selected == "r" or selected == "rotulo":
         print("You have choosen: Rotulos ")
